@@ -1,0 +1,42 @@
+name: Build CI
+on:
+  push:
+    # build and push anytime commits are pushed/merged
+    branches:
+      - main
+  schedule:
+    # build and push weekly
+    - cron: 0 0 * * 5
+  workflow_dispatch: # allow manual triggering
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+
+jobs:
+  build:
+    name: Build Docker
+    strategy:
+      fail-fast: false
+      matrix:
+        port:
+          - esp32
+          - nrf
+    uses: ./.github/workflows/docker_manifest.yml
+    with:
+      port: ${{ matrix.port }}
+    secrets: inherit
+
+  clean:
+    name: Cleanup GitHub Packages
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup GitHub packages container
+        uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          delete-ghost-images: true
+          delete-untagged: true
+          token: ${{ secrets.GITHUB_TOKEN }}

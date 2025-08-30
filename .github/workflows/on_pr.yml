@@ -1,0 +1,26 @@
+name: Build PR
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+
+jobs:
+  build:
+    name: Build Test
+    strategy:
+      fail-fast: false
+      matrix:
+        port:
+          - esp32
+          - nrf
+    uses: ./.github/workflows/docker_build.yml
+    with:
+      port: ${{ matrix.port }}
+      platform: linux/amd64
+      runs-on: ubuntu-24.04
+      push: false
+    secrets: inherit
