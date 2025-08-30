@@ -1,0 +1,29 @@
+name: Build Release
+on:
+  push:
+    # build and push anytime commits are pushed/merged
+    branches:
+      - main
+  schedule:
+    # build and push weekly
+    - cron: 0 5 * * 5
+  workflow_dispatch: # allow manual triggering
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+  attestations: write
+
+jobs:
+  docker-platforms:
+    strategy:
+      fail-fast: false
+      matrix:
+        mpy_platform:
+          - esp32
+          - nrf
+    uses: ./.github/workflows/docker_manifest.yml
+    with:
+      mpy_platform: ${{ matrix.mpy_platform }}
+    secrets: inherit

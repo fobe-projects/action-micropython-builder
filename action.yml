@@ -1,0 +1,55 @@
+name: Setup MicroPython Port Builder Composite Action
+description: Port builder actions for MicroPython steps
+author: FoBE Studio
+branding:
+  icon: chevron-right
+  color: purple
+
+inputs:
+  mpy_platform:
+    description: The MicroPython platform to build (espressif, nordic)
+    required: true
+  mpy_target:
+    description: The MicroPython run target (default is 'build')
+    required: false
+    default: build
+  mpy_board:
+    description: The MicroPython board to build for build target
+    required: false
+  mpy_boards:
+    description: The MicroPython board to build for release target
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - id: validate_inputs
+      run: |
+        if [[ "${{ inputs.mpy_target }}" == "build" && -z "${{ inputs.mpy_board }}" ]]; then
+          echo "Error: 'mpy_board' must be provided when 'mpy_target' is 'build'."
+          exit 1
+        fi
+        if [[ "${{ inputs.mpy_target }}" == "release" && -z "${{ inputs.mpy_boards }}" ]]; then
+          echo "Error: 'mpy_boards' must be provided when 'mpy_target' is 'release'."
+          exit 1
+        fi
+      shell: bash
+    - id: build_micropython
+      run: |
+        docker run --rm \
+          --env GITHUB_ACTIONS \
+          --env GITHUB_SHA \
+          --env MPY_PLATFORM \
+          --env MPY_TARGET \
+          --env MPY_BOARD \
+          --env MPY_BOARDS \
+          -v $GITHUB_WORKSPACE/bin:/workspace/bin \
+          -v $GITHUB_WORKSPACE/build/${{ inputs.mpy_board }}:/workspace/ports/${{ inputs.mpy_platform }}/build-${{ inputs.mpy_board }} \
+          ghcr.io/fobe-projects/action-micropython-builder:main-${{ inputs.mpy_platform }}
+      shell: bash
+      env:
+        GITHUB_SHA: ${{ github.sha }}
+        MPY_PLATFORM: ${{ inputs.mpy_platform }}
+        MPY_TARGET: ${{ inputs.mpy_target }}
+        MPY_BOARD: ${{ inputs.mpy_board }}
+        MPY_BOARDS: ${{ inputs.mpy_boards }}
