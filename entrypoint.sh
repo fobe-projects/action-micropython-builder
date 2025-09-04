@@ -19,6 +19,18 @@ git fetch "${REPO_REMOTE}" "${REPO_REF}"
 git reset --hard FETCH_HEAD
 git repack -d
 
+# Espressif IDF
+if [[ ${MPY_PORT} == "esp32" ]]; then
+    export IDF_PATH=/opt/esp-idf
+    export IDF_TOOLS_PATH=/opt/esp-idf-tools
+    export ESP_ROM_ELF_DIR=/opt/esp-idf-tools
+    # trunk-ignore(shellcheck/SC1091)
+    source "${IDF_PATH}/export.sh"
+fi
+
+make -j"${JOBS}" -C mpy-cross
+make -C ports/"${MPY_PORT}" submodules
+
 # Make the firmware tag
 # final filename will be <BOARD><-VARIANT>-<DATE>-v<SEMVER>.ext
 # where SEMVER is vX.Y.Z or vX.Y.Z-preview.N.gHASH or vX.Y.Z-preview.N.gHASH.dirty
@@ -35,18 +47,6 @@ fi
 FW_TAG="-${FW_DATE}-${FW_SEMVER}"
 echo "Firmware version: ${FW_SEMVER}"
 echo "Firmware tag: ${FW_TAG}"
-
-# Espressif IDF
-if [[ ${MPY_PORT} == "esp32" ]]; then
-    export IDF_PATH=/opt/esp-idf
-    export IDF_TOOLS_PATH=/opt/esp-idf-tools
-    export ESP_ROM_ELF_DIR=/opt/esp-idf-tools
-    # trunk-ignore(shellcheck/SC1091)
-    source "${IDF_PATH}/export.sh"
-fi
-
-make -j"${JOBS}" -C mpy-cross
-make -C ports/"${MPY_PORT}" submodules
 
 # Build
 echo "Build ${MPY_PORT} firmware: ${BOARD}"
