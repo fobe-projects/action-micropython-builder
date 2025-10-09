@@ -24,7 +24,7 @@ FROM base AS repo
 ARG WORKSPACE_REPO="https://github.com/fobe-projects/micropython.git"
 ARG WORKSPACE_REPO_UPSTREAM="https://github.com/micropython/micropython.git"
 ARG WORKSPACE_REPO_REMOTE="origin"
-ARG WORKSPACE_REPO_REF="main"
+ARG WORKSPACE_REPO_REF="master"
 
 RUN git config --global --add safe.directory /workspace \
     && git clone "${WORKSPACE_REPO}" /workspace \
@@ -35,7 +35,7 @@ RUN git config --global --add safe.directory /workspace \
     && git repack -d
 
 ARG WORKSPACE_BUILD_REMOTE="origin"
-ARG WORKSPACE_BUILD_REF="main"
+ARG WORKSPACE_BUILD_REF="master"
 RUN echo "Hard reset repository to: ${WORKSPACE_REPO_REMOTE}/${WORKSPACE_REPO_REF}" \
     && git fetch upstream --tags --prune --force \
     && git fetch origin --tags --prune --force \
