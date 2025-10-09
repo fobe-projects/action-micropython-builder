@@ -37,7 +37,7 @@ jobs:
 | Parameter Name  | Required | Default  | Description                                   |
 |-----------------|----------|----------|-----------------------------------------------|
 | `repo_remote`   | No       | `origin` | The MicroPython repository remote ('origin', 'upstream'). |
-| `repo_ref`      | No       | `main`   | The MicroPython repository reference (branch, tag, commit). |
+| `repo_ref`      | No       | `master`   | The MicroPython repository reference (branch, tag, commit). |
 | `port`          | Yes      | None     | The MicroPython platform to build (esp32, nrf). |
 | `board`         | No       | `""`     | The MicroPython board to build. |
 

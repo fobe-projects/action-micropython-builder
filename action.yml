@@ -12,7 +12,7 @@ inputs:
     required: false
   repo_ref:
     description: The MicroPython repository reference (branch, tag, commit)
-    default: main
+    default: master
     required: false
   port:
     description: The MicroPython platform to build (esp32, nrf)

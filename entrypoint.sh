@@ -9,7 +9,7 @@ JOBS=$(nproc)
 : "${GITHUB_ACTIONS:=false}"
 # Inputs (provide safe defaults)
 : "${REPO_REMOTE:=origin}"
-: "${REPO_REF:=main}"
+: "${REPO_REF:=master}"
 : "${BOARD:=}"
 
 # Reset to the target SHA
